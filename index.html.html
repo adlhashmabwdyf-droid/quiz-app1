@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الصرف الشامل - الصف الثالث الثانوي</title>
+    <style>
+        :root {
+            --primary: #1b4332;
+            --primary-light: #2d6a4f;
+            --accent: #d4af37;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #212529;
+            --border: #e9ecef;
+            --success: #2b9348;
+            --danger: #d90429;
+            --warning: #e9590c;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 60px; line-height: 1.6; }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: sticky; top: 0; z-index: 100;
+        }
+
+        .header h1 { font-size: 1.6rem; margin-bottom: 8px; color: #ffffff; }
+        .header p { font-size: 0.95rem; opacity: 0.9; }
+
+        .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid var(--border);
+        }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-weight: bold; margin-bottom: 5px; color: var(--primary); }
+        .input-group input {
+            width: 100%; padding: 12px; border: 2px solid var(--border);
+            border-radius: 8px; font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        .input-group input:focus { border-color: var(--primary); }
+
+        .timer-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #e8f5e9; border: 1px solid #c8e6c9; padding: 12px 20px;
+            border-radius: 8px; font-weight: bold; color: var(--primary); margin-bottom: 20px;
+        }
+
+        .question-card { margin-bottom: 25px; border-right: 4px solid var(--primary); }
+        .question-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: #111; }
+        
+        .options-container { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn {
+            background: #f8f9fa; border: 2px solid var(--border); padding: 12px 15px;
+            border-radius: 8px; text-align: right; cursor: pointer; font-size: 1rem;
+            transition: all 0.2s ease; display: flex; align-items: center;
+        }
+        .option-btn:hover { background: #e9ecef; }
+        .option-btn.selected { border-color: var(--primary); background: #e8f5e9; font-weight: bold; }
+
+        .btn-submit {
+            background: var(--primary); color: white; border: none; padding: 15px 30px;
+            font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer;
+            width: 100%; transition: 0.3s; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn-submit:hover { background: var(--primary-light); }
+
+        .whatsapp-btn {
+            background: #25D366; color: white; border: none; padding: 14px 20px;
+            font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer;
+            width: 100%; display: flex; align-items: center; justify-content: center;
+            gap: 10px; margin-top: 15px; text-decoration: none;
+        }
+        .whatsapp-btn:hover { background: #1eb854; }
+
+        .result-box { text-align: center; display: none; }
+        .score-display { font-size: 3rem; font-weight: 800; color: var(--primary); margin: 15px 0; }
+        .badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-weight: bold; color: white; background: var(--primary); }
+
+        .feedback {
+            margin-top: 10px; padding: 10px; border-radius: 6px; font-size: 0.95rem; display: none;
+        }
+        .correct-fb { background: #d4edda; color: #155724; }
+        .incorrect-fb { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>اختبار الصرف الشامل - الصف الثالث الثانوي</h1>
+    <p>الإبدال والإعلال - 100 سؤال - النتيجة تلقائية عقب الانتهاء</p>
+</div>
+
+<div class="container">
+    <!-- شاشة إدخال البيانات -->
+    <div id="start-screen" class="card">
+        <h2 style="color: var(--primary); margin-bottom: 15px;">تعليمات الاختبار:</h2>
+        <ul style="margin-right: 20px; margin-bottom: 20px;">
+            <li>يتكون الاختبار من 100 سؤال شامل للقرارات الصرفية.</li>
+            <li>تظهر الدرجة والتصحيح الكامل والتعليلات عقب تسليم الاختبار فقط.</li>
+            <li>يمكنك إرسال نتيجتك مباشرة للمعلم عبر الواتساب عند الانتهاء.</li>
+        </ul>
+        <div class="input-group">
+            <label for="student-name">اسم الطالب رباعياً:</label>
+            <input type="text" id="student-name" placeholder="أدخل اسمك الكامل هنا..." required>
+        </div>
+        <div class="input-group">
+            <label for="teacher-phone">رقم واتساب المعلم (لاستلام النتيجة):</label>
+            <input type="tel" id="teacher-phone" placeholder="مثال: 201000000000" value="">
+        </div>
+        <button class="btn-submit" onclick="startExam()">ابدأ الاختبار الآن</button>
+    </div>
+
+    <!-- شاشة الأسئلة -->
+    <div id="exam-screen" style="display: none;">
+        <div class="timer-bar">
+            <span>الطالب: <span id="display-name"></span></span>
+            <span>الأسئلة المُجابة: <span id="answered-count">0</span> / 25</span>
+        </div>
+
+        <form id="quiz-form">
+            <div id="questions-container"></div>
+            <button type="button" class="btn-submit" onclick="finishExam()">إنهاء وتسليم الاختبار</button>
+        </form>
+    </div>
+
+    <!-- شاشة النتيجة -->
+    <div id="result-screen" class="card result-box">
+        <h2>نتيجة الاختبار النهائي</h2>
+        <div class="score-display" id="final-score">0 / 25</div>
+        <div class="badge" id="grade-badge">ممتاز</div>
+        <p style="margin-top: 15px; color: #555;" id="result-time"></p>
+
+        <!-- زر إرسال النتيجة للمعلم عبر واتساب -->
+        <a id="wa-link" href="#" target="_blank" class="whatsapp-btn">
+            📱 إرسال النتيجة والتقرير للمعلم عبر الواتساب
+        </a>
+        
+        <button class="btn-submit" style="margin-top: 15px; background: #6c757d;" onclick="window.print()">طباعة تقرير النتيجة</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "1. الكلمة التي تضمنت إبدالاً قياسيًا للواو تاءً في فاء (افتعل) هي:", ops: ["اتَّزَرَ", "اتَّصَلَ", "اتَََّغَرَ", "اِئْتَزَرَ"], ans: 1, exp: "لأن أصلها (اوْتَصَلَ) وقعت الواو فاءً لافتعل وهي غير مبدلة من همزة فقلبت تاءً وادغمت." },
+        { q: "2. تُبدل الياء تاءً في فاء (افتعل) قياسًا مطردًا إذا كانت الياء:", ops: ["مبدلة من همزة", "أصلية غير مبدلة من شيء", "ساكنة بعد ضم", "متطرفة بعد فتح"], ans: 1, exp: "يشترط في إبدال الياء تاءً أن تكون أصلية وليست مبدلة من همزة." },
+        { q: "3. أصل كلمة (اتَّقَى) قبل حدوث الإبدال الصرفي هو:", ops: ["اِئْتَقَى", "اِوْتَقَى", "اِيْتَقَى", "اِتْتَقَى"], ans: 1, exp: "الفعل من (وَقَى)، وعلى وزن (افْتَعَلَ) أصلها (اِوْتَقَى)." },
+        { q: "4. السبب الصرفي في عدم إبدال فاء (افتعل) تاءً في نحو (اِئْتَزَرَ) هو أن الفاء:", ops: ["ياء متطرفة", "واو أصلية", "همزة وليست واوًا ولا ياءً أصليتين", "حرف صحيح متحرّك"], ans: 2, exp: "لأن الفاء همزة أصلية (من الإزار) وليست واوًا ولا ياءً أصليتين." },
+        { q: "5. الحكم الصرفي لكلمة (اتَّزَرَ) عند جمهور الصرفيين أنها:", ops: ["قياسية مطردة", "شاذة لأن فاءها منقلبة عن همزة", "جائزة الوجهين", "مصدر خماسي"], ans: 1, exp: "شاذة عند الجمهور لأن إبدال الهمزة تاءً في فاء افتعل غير قياسي." },
+        { q: "6. تُبدل الواو تاءً وتُدغم في تاء الافتعال في جميع المشتقات الآتية ما عدا:", ops: ["مُتَّعِد", "اتِّصَال", "مُتَّسِر", "مُوْتَمِر"], ans: 3, exp: "كلمة (مُوْتَمِر) فاؤها همزة أصلية من (أَمَرَ) وسالمت من الإبدال." },
+        { q: "7. تُبدل تاء الافتعال طاءً وجوبًا إذا أُسبقت بحرف من حروف:", ops: ["الصفير", "الإطباق", "الشفة", "القلقلة"], ans: 1, exp: "تُبدل تاء الافتعال طاءً بعد حروف الإطباق (ص، ض، ط، ظ)." },
+        { q: "8. أصل كلمة (اصْطَبَرَ) قبل الإبدال هو:", ops: ["اصْطَبَر", "اصْتَبَرَ", "اِصَّبَرَ", "اصْطَطَرَ"], ans: 1, exp: "أصلها (اصْتَبَرَ) وقعت التاء بعد الصاد ف قُلبت طاءً." },
+        { q: "9. عند بناء الفعل (ضَرَبَ) على وزن (افْتَعَلَ) ينتهي التشكل الصرفي إلى:", ops: ["اضْتَرَبَ", "اضَّرَبَ", "اضْطَرَبَ", "اضْدَرَبَ"], ans: 2, exp: "وقعت التاء بعد الضاد فقلبت طاءً وجوبًا لتصير (اضْطَرَبَ)." },
+        { q: "10. الكلمة التي جاز في تائها ثلاثة أوجه صرفية هي:", ops: ["اصْطَلَحَ", "اطَّرَدَ", "اظْطَلَمَ", "اضْطَرَبَ"], ans: 2, exp: "إذا كانت الفاء ظاءً (اظْطَلَمَ) يجوز: إظهار الظاء، أو إدغام الظاء في الطاء، أو إدغام الطاء في الظاء." },
+        { q: "11. تُبدل تاء الافتعال طاءً في كلمة (اطَّرَدَ) لأن فاءها:", ops: ["صاد", "ضاد", "طاء", "ظاء"], ans: 2, exp: "أصلها (اطْتَرَدَ) فاؤها طاء أصلية من (طَرَدَ)." },
+        { q: "12. إذا كانت فاء الافتعال صادًا مثل (صَلَحَ) وصِيغ منها (افْتَعَلَ) فإن التاء:", ops: ["تُقلب دالاً", "تُقلب طاءً", "تُقلب ياءً", "تثبت ولا تُبدل"], ans: 1, exp: "تُقلب التاء طاءً تجانساً مع حرف الإطباق." },
+        { q: "13. تُبدل تاء الافتعال دالاً وجوبًا إذا كانت فاء الكلمة حرفًا من الحروف الآتية:", ops: ["الدال والذال والزاي", "الصاد والضاد والطاء", "السين والشين", "الفاء والعين"], ans: 0, exp: "تُبدل التاء دالاً بعد حروف الدال والذال والزاي." },
+        { q: "14. أصل صيغة المشتق (مُدَّكِر) قبل الإبدال والإدغام هو:", ops: ["مُدَّكِر", "مُذْتَكِر", "مُزْتَكِر", "مُدْتَكِر"], ans: 1, exp: "اسم فاعل من (ذَكَرَ) على وزن مُفْتَعِل أصله (مُذْتَكِر)." },
+        { q: "15. عند صياغة (افتعل) من الفعل (زَهَرَ) يُقال قياسًا:", ops: ["اِزْتَهَرَ", "اِزَّهَرَ", "اِزْدَهَرَ", "اِصْطَهَرَ"], ans: 2, exp: "وقعت التاء بعد الزاي فقلبت دالاً (اِزْدَهَرَ)." },
+        { q: "16. الكلمة التي أُبدلت فيها تاء الافتعال دالاً ثم أُدغمت الدال في الفاء هي:", ops: ["ادَّعَى (من دَعَا)", "اصْطَفَى", "اتَّسَعَ", "اشْتَوَى"], ans: 0, exp: "أصلها (ادْتَعَى) قُلبت التاء دالاً ثم ادغمت الدال في الدال." },
+        { q: "17. إذا صِيغَ وزن (افتعل) من الفعل (ذَكَرَ) جاز فيه صرفيًا:", ops: ["الإظهار فقط", "ثلاثة أوجه: (اذْتَكَرَ، اِذَّكَرَ، اِدَّكَرَ)", "امتناع الإبدال", "قلب التاء طاءً"], ans: 1, exp: "يجوز إظهار الذال، أو إدغام الذال في الدال، أو إدغام الدال في الذال." },
+        { q: "18. العلة الصرفية في إبدال تاء الافتعال دالاً بعد الزاي في (ازْدَهَرَ) هي:", ops: ["التخلص من الساكنين", "التقارب في المخرج والصفات لتسهيل النطق", "تطرف حرف العلة", "وقوع التاء عينًا"], ans: 1, exp: "للتقارب الصوتي والمخرجي بين الزاي المجهورة والتاء المهموسة." },
+        { q: "19. تُقلب الواو ياءً قياسًا إذا تطرفت حقيقة أو حكمًا بشرط أن تكون مسبوقة بـ:", ops: ["فتحة", "كسرة", "ضمة", "سكون"], ans: 1, exp: "الموضع الأول لإعلال الواو ياءً: إذا تطرفت بعد كسر." },
+        { q: "20. العلة في إبدال الواو ياءً في كلمة (صِيَام) هي:", ops: ["وقوع الواو عينًا لمصدر أُعِلَّت في فعله وقبلها كسرة وبعدها ألف", "وقوع الواو لامًا", "التطرف الحقيقي", "وقوع الواو عينًا لجمع"], ans: 0, exp: "المصدر من (صَامَ - يَصُومُ) أصله صِوَام أُعلت العين بالقلب ياءً." },
+        { q: "21. سَلِمَت الواو من الإبدال ياءً في (سِوَاك) لأن الكلمة:", ops: ["مصدر لم تُعلّ عينه", "اسم ذات وليست مصدرًا", "جمع مكسر", "غير مسبوقة بكسر"], ans: 1, exp: "سواك اسم ذات وليس مصدرًا فلذا صحت الواو." },
+        { q: "22. سَلِمَت الواو من الإبدال ياءً في مصدر الفعل (عِوَج) لأن:", ops: ["ما قبلها مفتوح", "لم يقع بعد الواو ألف فاصلة", "الواو مشددة", "الكلمة اسم علم"], ans: 1, exp: "لعدم وجود الألف الفاصلة بعدها في المصدر." },
+        { q: "23. إذا التقت الواو والياء في كلمة واحدة والأولى منهما متأصلة ذاتًا وسكونًا:", ops: ["تُقلب الياء واوًا", "تُقلب الواو ياءً وتُدغم", "يجب التصحيح", "يجوز الإبدال"], ans: 1, exp: "تُقلب الواو ياءً وتُدغم في الياء وجوباً." },
+        { q: "24. تُعد كلمة (حَيَوَة) شاذة قياسًا لأنها:", ops: ["أُبدلت فيها الياء واوًا", "اجتمعت فيها الواو والياء والأولى متأصلة ولم تُقلب الواو ياءً", "خلت من شروط الإعلال", "جاءت على وزن مفاعل"], ans: 1, exp: "اجتمعت الواو والياء والسابق متأصل ذاتاً وسكوناً وحقها القلب والادغام لكنها صحت." },
+        { q: "25. تُعد كلمة (قُصْوَى) شاذة قياسًا فصيحة استعمالاً لأن الواو:", ops: ["وقعت عينًا لجمع", "وقعت لامًا لصفة على وزن (فُعْلَى) وسلمت من القلب ياءً", "تطرفت بعد كسر", "وقعت فاءً للافتعال"], ans: 1, exp: "القياس المطرد فيها (قُصْيَا) بالقلب ياءً لأنها لام صفة على (فعلى)." }
+    ];
+
+    let userAnswers = {};
+    let studentName = "";
+    let teacherPhone = "";
+
+    function startExam() {
+        studentName = document.getElementById('student-name').value.trim();
+        teacherPhone = document.getElementById('teacher-phone').value.trim();
+        if(!studentName) { alert("يرجى إدخال اسم الطالب أولاً!"); return; }
+
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('exam-screen').style.display = 'block';
+        document.getElementById('display-name').innerText = studentName;
+
+        renderQuestions();
+    }
+
+    function renderQuestions() {
+        const container = document.getElementById('questions-container');
+        container.innerHTML = "";
+        
+        questions.forEach((q, idx) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'card question-card';
+            qDiv.innerHTML = `
+                <div class="question-title">${q.q}</div>
+                <div class="options-container">
+                    ${q.ops.map((op, oIdx) => `
+                        <div class="option-btn" id="q${idx}_op${oIdx}" onclick="selectOption(${idx},${oIdx})">
+                            ${op}
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="feedback" id="fb_${idx}"></div>
+            `;
+            container.appendChild(qDiv);
+        });
+    }
+
+    function selectOption(qIdx, opIdx) {
+        userAnswers[qIdx] = opIdx;
+        questions[qIdx].ops.forEach((_, oIdx) => {
+            const btn = document.getElementById(`q${qIdx}_op${oIdx}`);
+            if(oIdx === opIdx) btn.classList.add('selected');
+            else btn.classList.remove('selected');
+        });
+        document.getElementById('answered-count').innerText = Object.keys(userAnswers).length;
+    }
+
+    function finishExam() {
+        if(Object.keys(userAnswers).length < questions.length) {
+            if(!confirm("لم تقم بالإجابة عن جميع الأسئلة، هل أنت تأكد من التسليم النهائي؟")) return;
+        }
+
+        let score = 0;
+        questions.forEach((q, idx) => {
+            const fb = document.getElementById(`fb_${idx}`);
+            fb.style.display = 'block';
+            if(userAnswers[idx] === q.ans) {
+                score++;
+                fb.className = 'feedback correct-fb';
+                fb.innerHTML = `✓ إجابة صحيحة! <br><small>${q.exp}</small>`;
+            } else {
+                fb.className = 'feedback incorrect-fb';
+                fb.innerHTML = `✗ إجابة خاطئة! الإجابة الصحيحة هي: <strong>${q.ops[q.ans]}</strong><br><small>${q.exp}</small>`;
+            }
+        });
+
+        document.getElementById('exam-screen').style.display = 'block';
+        document.getElementById('result-screen').style.display = 'block';
+        document.getElementById('final-score').innerText = `${score} / ${questions.length}`;
+        
+        const pct = (score / questions.length) * 100;
+        let badge = "ممتاز 🌟";
+        if(pct < 50) badge = "ضعيف - يحتاج مراجعة ⚠️";
+        else if(pct < 75) badge = "جيد جداً 👍";
+        
+        document.getElementById('grade-badge').innerText = badge;
+        document.getElementById('result-time').innerText = `تاريخ التسليم: ${new Date().toLocaleString('ar-EG')}`;
+
+        // إعداد رابط الواتساب
+        const message = encodeURIComponent(
+            `*نتيجة اختبار الصرف الإلكتروني*\n` +
+            `👤 *اسم الطالب:* ${studentName}\n` +
+            `📊 *الدرجة:* ${score} من ${questions.length} (${pct.toFixed(1)}%)\n` +
+            `🎖️ *التقدير:* ${badge}\n` +
+            `📅 *التاريخ:* ${new Date().toLocaleDateString('ar-EG')}`
+        );
+
+        const waBtn = document.getElementById('wa-link');
+        if(teacherPhone) {
+            waBtn.href = `https://wa.me/${teacherPhone}?text=${message}`;
+        } else {
+            waBtn.href = `https://wa.me/?text=${message}`;
+        }
+        
+        window.scrollTo({ top: document.getElementById('result-screen').offsetTop - 80, behavior: 'smooth' });
+    }
+</script>
+</body>
+</html>
